@@ -55,3 +55,55 @@ const userRegister = async (req, res) => {
       });
     }
   };
+
+
+  // User login
+const userLogin = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+  
+      // Check if email and password are provided
+      if (!email || !password) {
+        return res.status(400).json({
+          success: false,
+          message: "Please provide email and password.",
+        });
+      }
+  
+      // Find user by email
+      const user = await userModel.findOne({ email });
+  
+      // Check if user exists and password matches
+      if (!user || !(await bcrypt.compare(password, user.password))) {
+        return res.status(401).json({
+          success: false,
+          message: "Invalid email or password.",
+        });
+      }
+  
+      // Generate JWT token
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
+        expiresIn: "30d",
+      });
+  
+      // Set JWT token in HTTP-only cookie
+      res
+        .cookie("Token", token, {
+          httpOnly: true,
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+          secure: true,
+        })
+        .status(200)
+        .json({
+          success: true,
+          message: "Login successful.",
+          token,
+        });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Login failed. Please try again later.",
+      });
+    }
+  };
+  
