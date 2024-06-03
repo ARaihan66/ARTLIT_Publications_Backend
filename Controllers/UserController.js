@@ -107,3 +107,35 @@ const userLogin = async (req, res) => {
     }
   };
   
+
+// User log out
+const userLogout = async (req, res) => {
+    try {
+      // Check if user is authenticated (assuming userId is set by authentication middleware)
+      if (!req.id) {
+        return res.status(400).json({
+          success: false,
+          message: "Please login first.",
+        });
+      }
+  
+      // Clear the authentication token (e.g., JWT token stored in a cookie)
+      res.clearCookie("Token").status(200).json({
+        success: true,
+        message: "Logout successful.",
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Logout failed. Please try again later.",
+      });
+    }
+  };
+  
+  
+  module.exports = {
+    userRegister,
+    userLogin,
+    userLogout
+  };
+  
