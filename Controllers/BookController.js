@@ -50,4 +50,15 @@ const updateBook =  async (req, res) => {
     }
   };
 
+// Get all books
+const getBooks = async (req, res) => {
+    try {
+      const books = await Book.find().populate('authors publisher');
+      res.status(200).json(books);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+  
+
 
