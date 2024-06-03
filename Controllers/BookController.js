@@ -1,7 +1,7 @@
 const BookModel = require("../Models/BookModel");
 
 // Create a new book with image upload
-router.post('/books', upload.single('coverImage'), async (req, res) => {
+const addBook = async (req, res) => {
     try {
       const { title, summary, authors, publisher, publishedDate, pages } = req.body;
       const coverImage = req.file ? req.file.path : null;
@@ -21,7 +21,33 @@ router.post('/books', upload.single('coverImage'), async (req, res) => {
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
-  });
+  };
 
 
+// Update a book with image upload
+const updateBook =  async (req, res) => {
+    try {
+      const { title, summary, authors, publisher, publishedDate, pages } = req.body;
+      const coverImage = req.file ? req.file.path : null;
   
+      const book = await Book.findById(req.params.id);
+      if (!book) return res.status(404).json({ message: 'Book not found' });
+  
+      book.title = title;
+      book.summary = summary;
+      book.authors = authors;
+      book.publisher = publisher;
+      book.publishedDate = publishedDate;
+      book.pages = pages;
+      if (coverImage) {
+        book.coverImage = coverImage;
+      }
+  
+      await book.save();
+      res.status(200).json(book);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  };
+
+
