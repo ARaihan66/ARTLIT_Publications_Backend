@@ -5,7 +5,13 @@ const connectDB = require("./Database/connectionDB");
 
 
 
+
+const userRouter = require("./Routers/UserRouter");
+
+app.use("/api/user", userRouter);
+
 connectDB();
+
 app.listen(port, ()=>{
     console.log(`App is running on the port ${port}`)
 })
